@@ -2,12 +2,29 @@
 const models = require('../db/models');
 
 const getProducts = async (req, res) => {
-  const products = await models.products.findAll();
-  return res.send(products);
+  const getProducts = await models.products.findAll();
+  return res.send(getProducts);
+};
+
+const getProductsById = async (req, res) => {
+  const productsById = await models.products.findOne({
+    where: {
+      id: req.params.productId,
+    },
+  });
+
+  if (productsById) {
+    return res.status(200).json(res.send(productsById));
+  } if (!productsById) {
+    return res.status(400).json({
+      error: 400,
+      errorMessage: 'Product not found',
+    });
+  }
 };
 
 const createProducts = async (req, res) => {
-  const products = await models.products.create({
+  const createProducts = await models.products.create({
     name: req.body.name,
     flavor: req.body.flavor,
     complement: req.body.complement,
@@ -16,17 +33,17 @@ const createProducts = async (req, res) => {
     type: req.body.type,
     sub_type: req.body.sub_type,
   });
-  return res.send(products);
+  return res.send(createProducts);
 };
 
 const deleteProducts = async (req, res) => {
-  const products = await models.products.findOne({
+  const deleteProducts = await models.products.findOne({
     where: {
       id: req.params.productId,
     },
   });
 
-  if (!products) {
+  if (!deleteProducts) {
     return res.status(400).json({
       errorCode: 400,
       errorMessage: 'Product not found.',
@@ -82,5 +99,5 @@ const updateProducts = async (req, res) => {
 };
 
 module.exports = {
-  getProducts, createProducts, deleteProducts, updateProducts,
+  getProducts, createProducts, deleteProducts, updateProducts, getProductsById,
 };
