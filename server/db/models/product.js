@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
+
   Product.init({
     name: DataTypes.STRING,
     flavor: DataTypes.STRING,
@@ -25,5 +26,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'products',
   });
+
   return Product;
 };

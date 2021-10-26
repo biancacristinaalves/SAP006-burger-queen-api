@@ -6,7 +6,7 @@ const getProducts = async (req, res) => {
   return res.send(products);
 };
 
-const creatProducts = async (req, res) => {
+const createProducts = async (req, res) => {
   const products = await models.products.create({
     name: req.body.name,
     flavor: req.body.flavor,
@@ -19,4 +19,68 @@ const creatProducts = async (req, res) => {
   return res.send(products);
 };
 
-module.exports = { getProducts, creatProducts };
+const deleteProducts = async (req, res) => {
+  const products = await models.products.findOne({
+    where: {
+      id: req.params.productId,
+    },
+  });
+
+  if (!products) {
+    return res.status(400).json({
+      errorCode: 400,
+      errorMessage: 'Product not found.',
+    });
+  }
+
+  try {
+    await models.products.destroy({
+      where: {
+        id: req.params.productId,
+      },
+    });
+    return res.status(200).json('Product was successfully deleted.');
+  } catch (error) {
+    return res.status(400).json({
+      errorCode: 400,
+      error: error.errorMessage,
+    });
+  }
+};
+
+const updateProducts = async (req, res) => {
+  const updateProducts = await models.products.findOne({
+    where: {
+      id: req.params.productId,
+    },
+  });
+
+  if (!updateProducts) {
+    return res.status(400).json({
+      errorCode: 400,
+      errorMessage: 'Product not found.',
+    });
+  }
+
+  try {
+    const {
+      name, flavor, complement, price, image, type, subtype,
+    } = req.body;
+    await models.products.update(
+      {
+        name, flavor, complement, price, image, type, subtype,
+      },
+      { where: { id: req.params.productId } },
+    );
+    return res.status(200).json('Product was successfully update.');
+  } catch (error) {
+    return res.status(400).json({
+      errorCode: 400,
+      error: error.errorMessage,
+    });
+  }
+};
+
+module.exports = {
+  getProducts, createProducts, deleteProducts, updateProducts,
+};
